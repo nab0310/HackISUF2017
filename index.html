@@ -8,6 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="main.css" rel="stylesheet" type="text/css">
+  <script src="twitter.js"></script>
 </head>
 <body id="home" data-spy="scroll" data-target=".navbar" data-offset="60">
 
@@ -66,11 +67,11 @@
       <hr>
       <div id="vid1" class="center">
         <iframe width="700" height="400"
-            src="http://www.youtube.com/embed/QEK-sTDwjj8" frameborder="0" allowfullscreen>
+            src="https://www.youtube.com/embed/QEK-sTDwjj8" frameborder="0" allowfullscreen>
         </iframe>
         <hr>
         <iframe allowfullscreen="" width="700" height="400"
-            src="http://www.youtube.com/live_chat?v=QEK-sTDwjj8&embed_domain=www.heroku.com/index.html" frameborder="0" allowfullscreen>
+            src="https://www.youtube.com/live_chat?v=QEK-sTDwjj8&embed_domain=www.heroku.com/index.html" frameborder="0" allowfullscreen>
         </iframe>
       </div>
     </div>
@@ -82,41 +83,21 @@
 </footer>
 
 <script>
-    var Twit = require('twit');
-    // grab the packages we need
-    var mongoose = require('mongoose');
-    var MongoClient = require('mongodb').MongoClient;
-    var url = 'mongodb://heroku_j8s76cm0:puh9lnhidinimuqbr7m6lm8umq@ds125565.mlab.com:25565/heroku_j8s76cm0';
-    var myCollection;
-    var db = MongoClient.connect(url, function(err, db) {
-        if(err)
-            throw err;
-        console.log("Connected to the mongoDB!");
-        myCollection = db.collection('tweets');
-    });
-
-    function returnTopTweets(tweetIdToReply, userHandle){
-        var commands = myCollection.find().limit(10).sort({ "votes": 1 });
-        commands.each(function(err, doc){
-            console.log(doc);
-        });
-        return commands;
-    }
-
     function getCurrentTop(){
         var data = returnTopTweets();
 
+        console.log(data);
         var i;
-        for(i=0; i < data.suggestions.length; i++){
+        for(i=0; i < data.length; i++){
             $("#currentTop").append($('<tr>')
                 .append($('<td>')
-                .text(data.suggestions[i].id)
+                .text(data[i].UUID)
                 )
                 .append($('<td>')
-                .text(data.suggestions[i].request)
+                .text(data[i].text)
                 )
                 .append($('<td>')
-                .text(data.suggestions[i].votes)
+                .text(data[i].votes)
                 )
             );
         }
