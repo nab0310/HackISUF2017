@@ -123,7 +123,7 @@ function voteForExistingCommand(id, numberOfVotes, userHandle){
         console.log(err);
       }else{
         console.log(documents.value.text);
-        var text = 'You voted for: "' + documents.value.text +'"! It currently has: '+ documents.value.votes;
+        var text = 'You voted for: "' + documents.value.text +'"!';
         sendDirectMessage(text,userHandle);
       }
     });
@@ -138,7 +138,7 @@ function returnTopTweet(tweetIdToReply, userHandle){
   var i=1;
   commands.each(function(err, doc){
     if(doc != null){
-      text += i+'. '+doc.text+' | '+doc.UUID+' | '+doc.votes+'\n';
+      text += i+'. '+doc.text+' | id='+doc.UUID+' | votes='+doc.votes+'\n';
       i++;
     }else{
       text += " Vote for them by tweeting !vote <UUID> <numberOfVotes>.";
