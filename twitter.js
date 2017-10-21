@@ -116,8 +116,9 @@ function voteForExistingCommand(id, numberOfVotes, userHandle){
   var commands = myCollection.findOneAndUpdate(
     {UUID: id},
     {
-      $inc: { votes: parseInt(numberOfVotes) }
-    }, function(err, documents){
+      $inc: { votes: parseInt(numberOfVotes) },
+    },
+    { returnNewDocument: true}, function(err, documents){
       if(err != null){
         console.log(err);
       }else{
