@@ -11,16 +11,18 @@
 </head>
 <body id="home" data-spy="scroll" data-target=".navbar" data-offset="60">
 
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar navbar-header text-right">
             <!-- Condensed menu displays on mobile -->
             <button type="button" class="navbar-toggle mobile-only" data-toggle="collapse" data-target="#myNavbar" style="display:inline, hide;">
-            <span style="float:left;"><strong>MENU &nbsp;</strong></span>
-            <span class="glyphicon glyphicon-menu-hamburger" style="float:right; font-size:1.2em"></span>
+                <span style="float:left;"><strong>MENU &nbsp;</strong></span>
+                <span class="glyphicon glyphicon-menu-hamburger" style="float:right; font-size:1.2em"></span>
             </button>
+            <ul class="nav navbar-brand navbar-left">
+                <li>Who's in the cube!?</li>
+            </ul>
         </div>
-    <div class="container">
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <!-- Need toggle and target to collapse correctly on mobile -->
@@ -100,55 +102,25 @@
       </table>
       <hr>
 
+      <!-- Live Twitter Feed -->
       <h4 class="center">Recent Requests</h4>
-      <table style="width:100%" class="table table-striped table-condensed table-bordered">
-            <tr>
-                <th>ID</th>
-                <th>Request</th>
-                <th>Votes</th>
-            </tr>
-            <tr>
-                <td>0</td>
-                <td>Turn on the light</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Turn on the light</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Turn off the light</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Turn on the light</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Turn on the light</td>
-                <td>12</td>
-            </tr>
-          </table>
+      <a class="twitter-timeline" href="https://twitter.com/ProjectCube1?ref_src=twsrc%5Etfw">Tweets by ProjectCube1</a>
+      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     </div>
 
     <div class="col-sm-9">
       <br>
-      <h4><small>LIVE STREAM</small></h4>
+      <h2>Live Stream</h2>
       <hr>
       <div id="vid1" class="center">
         <iframe width="700" height="400"
             src="http://www.youtube.com/embed/QEK-sTDwjj8" frameborder="0" allowfullscreen>
         </iframe>
-        <br>
-        <iframe width="700" height="400"
+        <hr>
+        <iframe allowfullscreen="" width="700" height="400"
             src="http://www.youtube.com/live_chat?v=QEK-sTDwjj8&embed_domain=www.heroku.com/index.html" frameborder="0" allowfullscreen>
         </iframe>
       </div>
-      <hr>
     </div>
   </div>
 </div>
