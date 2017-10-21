@@ -103,9 +103,9 @@
     }
 
     $(document).ready(function(){
-        $.get({
+        $.ajax({
            dataType: 'json',
-           type: 'POST',
+           type: 'GET',
            url: 'getTop',
            success: getCurrentTop
         });
