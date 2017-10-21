@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/nab0310/HackISUF2017#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "firebase": "^4.6.0",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.12.3",
+    "twit": "^2.2.9",
+    "uuid": "^3.1.0"
   }
 }
