@@ -26,96 +26,158 @@ var Command = require('./models/command');
 var T = new Twit({
   consumer_key:         'HeesvHUNM9W6AfGW0U5NENGx7',
   consumer_secret:      'tz3JYAs0Nm3EfSbBHwMFghizWrHt6ds9JR0cCPsZVdusfGIGhw',
-  access_token:         '921549079498379264-v4KE3nTWInt2vHsDOQ9f5IjDDgI7NCT',
-  access_token_secret:  'dnI2rZ4PotfoNkK8LvwGysZp1MheICTfIObd1OZzyy59i',
+  access_token:         '921549079498379264-pT8IgFHtw5spi8h5ea423p5LAmVsTHF',
+  access_token_secret:  'odDbIuldTyLSb0HPJObTb3L7iGSQYbstnWnDIPGHTZ3qa',
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
 })
 
-// to lower every request
-// !vote [ID] #
-// !top
-// !help
-// !cmd <String>
 var userStream = T.stream('user');
-
-var stream = T.stream('statuses/filter', {track: ['hack', 'hackISU', 'ISU']});
-
-stream.on('tweet', function(tweet){
-  tweetEvent(tweet);
-});
 
 userStream.on('tweet', function(tweet) {
   tweetEvent(tweet);
 });
 
-function tweetEvent(eventMsg){
-	var from = eventMsg.user.screen_name;
-  console.log("The tweet was from: "+from);
-  var text = eventMsg.text.toLowerCase()+"";
-  returnTopTweets();
+userStream.on('direct_message', function (eventMsg) {
+    dmEvent(eventMsg.direct_message);
+});
 
-  //If we didn't send this tweet, handle the request
-  if(from !== "ProjectCube1" && eventMsg.retweeted_status == null){
-    // var splitText = text.split(" ");
-    // // //Split the text, the first entry will be the command...
-    // switch(splitText[0]){
-    //   case "!vote":
-    //    //Format will be !vote <ID> <Number of Votes>
-    //     voteForExistingCommand(splitText[1], splitText[2]);
-    //   case "!top":
-    //     returnTopTweets(eventMsg.id_str, from);
-    //   case "!help":
-    //     tweetHelpMessage(eventMsg.id_str, from);
-    //   case "!cmd":
-    //     createNewCommand(text, eventMsg.id_str, from);
-    //   default:
-    //   //Tweet you may have entered a command incorrectly...
-    //     tweetHelpMessage();
-    // // }
-    //createNewCommand(text, eventMsg.id_str, from);
+userStream.on("follow", function(eventMsg){
+  welcomeUsers(eventMsg);
+});
+
+function welcomeUsers(eventMsg){
+  var followObject = {
+    screen_name: eventMsg.source.screen_name
+  }
+
+  if(eventMsg.source.screen_name != "ProjectCube1"){
+    T.post('friendships/create', followObject, (err, data) =>{
+      if(err){
+        console.log("something went wrong! "+err);
+      }else{
+        console.log(data);
+        tweetWelcomeMessage(eventMsg.source.id, eventMsg.source.screen_name);
+      }
+    });
   }
 }
+
+function dmEvent(eventMsg){
+  var from = eventMsg.sender.screen_name;
+  var text = eventMsg.text.toLowerCase()+"";
+  if(eventMsg.sender.screen_name != "ProjectCube1"){
+
+    var splitText = text.split(" ");
+    // //Split the text, the first entry will be the command...
+    switch(splitText[0]){
+      case "!vote":
+       //Format will be !vote <ID> <Number of Votes>
+        voteForExistingCommand(splitText[1], splitText[2], from);
+        break;
+      case "!top":
+        returnTopTweet(eventMsg.sender.id, from);
+        break;
+      case "!help":
+        tweetHelpMessage(eventMsg.sender.id, from);
+        break;
+      case "!cmd":
+        createNewCommand(text, eventMsg.sender.id, from);
+        break;
+      default:
+      //Tweet you may have entered a command incorrectly...
+        tweetHelpMessage(eventMsg.sender.id, from);
+        break;
+    }
+  }
+}
+
 function createNewCommand(text, tweetIdToReply, userHandle) {
   var uuid = uuidv4();
+  var removeCmd = text.split("!cmd");
+  console.log("Inserting "+removeCmd[1]+" into db.");
   var command = new Command({
     username: userHandle,
-    text: text,
+    text: removeCmd[1],
     reply_id: tweetIdToReply,
     votes: 1,
     UUID: uuid.substring(uuid.length - 4),
   });
-  myCollection.insert(command);
+  myCollection.insert(command, (err, res)=>{
+    if(err != null){
+      console.log(err);
+    }else{
+      var text = "Thanks for submitting '" + removeCmd[1] + "' , we're a bit ashamed to say we've replied to you.";
+      sendDirectMessage(text, userHandle);
+    }
+  });
 }
 
-function voteForExistingCommand(id, numberOfVotes){
-  var commands = myCollection.update(
+function voteForExistingCommand(id, numberOfVotes, userHandle){
+  var commands = myCollection.findOneAndUpdate(
     {UUID: id},
     {
-      $inc: { votes: 1 }
-    }, function(err, status){
-      if(err != null){console.log(err);}
+      $inc: { votes: parseInt(numberOfVotes) }
+    }, function(err, documents){
+      if(err != null){
+        console.log(err);
+      }else{
+        console.log(documents.value.text);
+        var text = 'You voted for: "' + documents.value.text +'"! It currently has: '+ documents.value.votes;
+        sendDirectMessage(text,userHandle);
+      }
     });
 }
 
-function returnTopTweets(tweetIdToReply, userHandle){
-  var commands = myCollection.find().limit(10).sort({ "votes": 1 })
+function returnTopTweet(tweetIdToReply, userHandle){
+  var commands = myCollection.find().limit(5).sort({ "votes": -1 })
+  var text= "";
+  var infoText = 'Here are the current top commands: \n'+
+             'Format is <Cmd> | <UUID> | <Votes> \n';
+  sendDirectMessage(infoText, userHandle);
+  var i=1;
   commands.each(function(err, doc){
-    console.log(doc);
-  })
+    if(doc != null){
+      text += i+'. '+doc.text+' | '+doc.UUID+' | '+doc.votes+'\n';
+      i++;
+    }else{
+      text += " Vote for them by tweeting !vote <UUID> <numberOfVotes>.";
+      sendDirectMessage(text, userHandle);
+    }
+  });
 }
 
 function tweetHelpMessage(tweetIdToReply, userHandle){
- var text = '@'+userHandle+' invalid input. Start your msg with either: !vote, !top or !cmd. Tweet !help <command> for more details'
- sendTweet(text, userHandle)
+ var text = 'You have given me invalid input. Start your message with either: '+
+            '!vote, !top or !cmd.\n'+
+            '----\n'+
+            '!vote <ID> <Number of Votes> - vote on existing ideas. Find ID at <domain>.\n'+
+            '----\n'+
+            '!top - displays the top 5 current ideas.\n'+
+            '----\n'+
+            '!cmd <Command> - Submit a new thing for us to do.';
+ sendDirectMessage(text, userHandle)
 }
 
-function sendTweet(text, tweetIdToReply){
-  var tweet = {
-		status: text,
-		in_reply_to_status_id: tweetIdToReply
-	}
+function tweetWelcomeMessage(tweetIdToReply, userHandle){
+var text = "Hello! Welcome to the Isolation Room, please visit <Domain> to see the stream!\n"+
+          'Start your message with either: '+
+          '!vote, !top or !cmd.\n'+
+          '----\n'+
+          '!vote <ID> <Number of Votes> - vote on existing ideas. Find ID at <domain>.\n'+
+          '----\n'+
+          '!top - displays the top 5 current ideas.\n'+
+          '----\n'+
+          '!cmd <Command> - Submit a new thing for us to do.';
+  sendDirectMessage(text, userHandle);
+}
 
-	T.post('statuses/update',tweet,function(err){
+function sendDirectMessage(text, userId){
+  var dm = {
+    text: text,
+    screen_name:userId
+  }
+
+  T.post('direct_messages/new', dm, function(err){
     if(err){
       console.log("This went wrong! "+err);
     }else{
