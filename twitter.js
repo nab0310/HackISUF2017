@@ -80,7 +80,7 @@ function dmEvent(eventMsg){
       case "!help":
         tweetHelpMessage(eventMsg.sender.id, from);
         break;
-      case "!cmd ":
+      case "!cmd":
         createNewCommand(text, eventMsg.sender.id, from);
         break;
       default:
@@ -93,7 +93,7 @@ function dmEvent(eventMsg){
 
 function createNewCommand(text, tweetIdToReply, userHandle) {
   var uuid = uuidv4();
-  var removeCmd = text.split("!cmd ")[1];
+  var removeCmd = text.split("!cmd")[1];
   console.log("Inserting "+removeCmd+" into db.");
   var command = new Command({
     username: userHandle,
@@ -114,8 +114,8 @@ function createNewCommand(text, tweetIdToReply, userHandle) {
 
 function voteForExistingCommand(id, numberOfVotes, userHandle){
   var numVotes = parseInt(numberOfVotes);
-  if(numVotes > 5)
-    numVotes = 5;
+  if(numVotes > 3)
+    numVotes = 3;
 
   var commands = myCollection.findOneAndUpdate(
     {UUID: id},
@@ -137,7 +137,7 @@ function returnTopTweet(tweetIdToReply, userHandle){
   var commands = myCollection.find().limit(5).sort({ "votes": -1 })
   var text= "";
   var infoText = 'Here are the current top commands: \n'+
-             'Format is <Cmd> | <UUID> | <Votes> \n';
+             'Format is <cmd> | <UUID> | <numberOfVotes> \n';
   sendDirectMessage(infoText, userHandle);
   var i=1;
   commands.each(function(err, doc){
