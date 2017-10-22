@@ -82,35 +82,29 @@
 </footer>
 
 <script>
-    function getCurrentTop(returnData){
-        var data = json.parse(returnData);
-
-        console.log(data);
-        var i;
-        for(i=0; i < data.length; i++){
-            $("#currentTop").append($('<tr>')
-                .append($('<td>')
-                .text(data[i].UUID)
-                )
-                .append($('<td>')
-                .text(data[i].text)
-                )
-                .append($('<td>')
-                .text(data[i].votes)
-                )
-            );
-        }
-    }
-
     $(document).ready(function(){
-        $.ajax({
-           dataType: 'json',
-           type: 'GET',
-           url: '/getTop',
-           success: getCurrentTop
+        fetch('/getTop', {method: 'GET'}).then(function (response){
+            return response.json();
+        }).then(function(returnData){
+            //put data into table
+            var data = json.parse(returnData);
+
+            console.log(data);
+            var i;
+            for(i=0; i < data.length; i++){
+                $("#currentTop").append($('<tr>')
+                    .append($('<td>')
+                    .text(data[i].UUID)
+                    )
+                    .append($('<td>')
+                    .text(data[i].text)
+                    )
+                    .append($('<td>')
+                    .text(data[i].votes)
+                    )
+                );
+            }
         });
-        
-        //getCurrentTop();
     });
 </script>
 
