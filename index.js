@@ -25,7 +25,7 @@ app.get('/index.html', function (req, res) {
 })
 
 app.get('/getTop', function (req, res) {
-  //var commands = myCollection.find().limit(10).sort({ "votes": 1 });
+  var commands = myCollection.find().limit(10).sort({ "votes": 1 });
   res.json("commands");
 })
 
