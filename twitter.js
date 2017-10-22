@@ -80,7 +80,7 @@ function dmEvent(eventMsg){
       case "!help":
         tweetHelpMessage(eventMsg.sender.id, from);
         break;
-      case "!cmd":
+      case "!cmd ":
         createNewCommand(text, eventMsg.sender.id, from);
         break;
       default:
@@ -93,11 +93,11 @@ function dmEvent(eventMsg){
 
 function createNewCommand(text, tweetIdToReply, userHandle) {
   var uuid = uuidv4();
-  var removeCmd = text.split("!cmd");
-  console.log("Inserting "+removeCmd[1]+" into db.");
+  var removeCmd = text.split("!cmd ")[1];
+  console.log("Inserting "+removeCmd+" into db.");
   var command = new Command({
     username: userHandle,
-    text: removeCmd[1],
+    text: removeCmd,
     reply_id: tweetIdToReply,
     votes: 1,
     UUID: uuid.substring(uuid.length - 4),
@@ -106,17 +106,21 @@ function createNewCommand(text, tweetIdToReply, userHandle) {
     if(err != null){
       console.log(err);
     }else{
-      var text = "Thanks for submitting '" + removeCmd[1] + "' , we're a bit ashamed to say we've replied to you.";
+      var text = "Thanks for submitting '" + removeCmd + "' , we're a bit ashamed to say we've replied to you.";
       sendDirectMessage(text, userHandle);
     }
   });
 }
 
 function voteForExistingCommand(id, numberOfVotes, userHandle){
+  var numVotes = parseInt(numberOfVotes);
+  if(numVotes > 5)
+    numVotes = 5;
+
   var commands = myCollection.findOneAndUpdate(
     {UUID: id},
     {
-      $inc: { votes: parseInt(numberOfVotes) },
+      $inc: { votes:  numVotes},
     },
     { returnNewDocument: true}, function(err, documents){
       if(err != null){

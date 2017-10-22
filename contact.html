@@ -43,7 +43,6 @@
       <br>
       <h4 class="center">Current Top 10</h4>
       <table id="currentTop" style="width:100%" class="table table-striped table-condensed table-bordered">
-        <caption align="bottom">Expires: <span id="expireTime">10min</span></caption>
         <tr>
             <th>ID</th>
             <th>Request</th>
@@ -104,7 +103,7 @@
         }).done(function(data){
             //put data into table
             console.log(data);
-            
+
             var i;
             for(i=0; i < data.length; i++){
                 $("#currentTop").append($('<tr>')

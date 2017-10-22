@@ -104,9 +104,8 @@
             url: "/getTop"
         }).done(function(data){
             //put data into table
-            //var data = json.parse(returnData);
-
             console.log(data);
+            
             var i;
             for(i=0; i < data.length; i++){
                 $("#currentTop").append($('<tr>')
