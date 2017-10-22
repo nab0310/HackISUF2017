@@ -22,8 +22,8 @@ app.get('/index.html', function (req, res) {
   res.sendFile(path.join(__dirname + '/index.html'));
 })
 
-app.get('/getTop', async function (req, res) {
-  var commands = await myCollection.find().limit(10).sort({ "votes": 1 });
+app.get('/getTop', function (req, res) {
+  var commands = myCollection.find().limit(10).sort({ "votes": 1 });
   res.json(commands);
 })
 
