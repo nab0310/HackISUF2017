@@ -114,8 +114,9 @@ function createNewCommand(text, tweetIdToReply, userHandle) {
 
 function voteForExistingCommand(id, numberOfVotes, userHandle){
   var numVotes = parseInt(numberOfVotes);
-  if(numVotes > 3)
+  if(numVotes > 3){
     numVotes = 3;
+  }
 
   var commands = myCollection.findOneAndUpdate(
     {UUID: id},
