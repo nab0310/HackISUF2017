@@ -99,32 +99,29 @@
 </footer>
 
 <script>
-    function getCurrentTop(){
-        var data = { "suggestions": [
-            { "id":"2563", "request":"do something crazy", "votes":"11"},
-            { "id":"2426", "request":"do something more crazy", "votes":"63"},
-            { "id":"2965", "request":"do something less crazy", "votes":"7"}
-            ]
-        };
-
-        var i;
-        for(i=0; i < data.suggestions.length; i++){
-            $("#currentTop").append($('<tr>')
-                .append($('<td>')
-                .text(data.suggestions[i].id)
-                )
-                .append($('<td>')
-                .text(data.suggestions[i].request)
-                )
-                .append($('<td>')
-                .text(data.suggestions[i].votes)
-                )
-            );
-        }
-    }
-
     $(document).ready(function(){
-        getCurrentTop();
+        $.ajax({
+            url: "/getTop"
+        }).done(function(data){
+            //put data into table
+            //var data = json.parse(returnData);
+
+            console.log(data);
+            var i;
+            for(i=0; i < data.length; i++){
+                $("#currentTop").append($('<tr>')
+                    .append($('<td>')
+                    .text(data[i].UUID)
+                    )
+                    .append($('<td>')
+                    .text(data[i].text)
+                    )
+                    .append($('<td>')
+                    .text(data[i].votes)
+                    )
+                );
+            }
+        });
     });
 </script>
 

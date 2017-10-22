@@ -21,6 +21,7 @@
     "express": "^4.16.2",
     "firebase": "^4.6.0",
     "mongodb": "^2.2.33",
+    "mongoist": "^1.4.3",
     "mongoose": "^4.12.3",
     "path": "^0.12.7",
     "twit": "^2.2.9",

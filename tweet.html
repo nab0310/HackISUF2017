@@ -79,23 +79,23 @@
                         <th>Description</th>
                     </tr>
                     <tr>
-                        <td class="center">!vote</td>
-                        <td class="center">&lt; ID &gt; &lt; NumVotes &gt;</td>
+                        <td>!vote</td>
+                        <td>&lt; ID &gt; &lt; NumVotes &gt;</td>
                         <td>Votes for the suggestion with corresponding id the number of times input (limit 3)</td>
                     </tr>
                     <tr>
-                        <td class="center">!top</td>
+                        <td>!top</td>
                         <td></td>
                         <td>Returns the top 5 commands at the current time</td>
                     </tr>
                     <tr>
-                        <td class="center">!help</td>
+                        <td>!help</td>
                         <td></td>
                         <td>Replies with the help menu</td>
                     </tr>
                     <tr>
-                        <td class="center">!cmd</td>
-                        <td class="center">&lt; cmdString &gt;</td>
+                        <td>!cmd</td>
+                        <td>&lt; cmdString &gt;</td>
                         <td>Enters a new suggestion into the running</td>
                     </tr>
                 </table>
@@ -112,32 +112,29 @@
 </footer>
 
 <script>
-    function getCurrentTop(){
-        var data = { "suggestions": [
-            { "id":"2233", "request":"do something crazy", "votes":"11"},
-            { "id":"2454", "request":"do something more crazy", "votes":"63"},
-            { "id":"2567", "request":"do something less crazy", "votes":"7"}
-            ]
-        };
-
-        var i;
-        for(i=0; i < data.suggestions.length; i++){
-            $("#currentTop").append($('<tr>')
-                .append($('<td>')
-                .text(data.suggestions[i].id)
-                )
-                .append($('<td>')
-                .text(data.suggestions[i].request)
-                )
-                .append($('<td>')
-                .text(data.suggestions[i].votes)
-                )
-            );
-        }
-    }
-
     $(document).ready(function(){
-        getCurrentTop();
+        $.ajax({
+            url: "/getTop"
+        }).done(function(data){
+            //put data into table
+            //var data = json.parse(returnData);
+
+            console.log(data);
+            var i;
+            for(i=0; i < data.length; i++){
+                $("#currentTop").append($('<tr>')
+                    .append($('<td>')
+                    .text(data[i].UUID)
+                    )
+                    .append($('<td>')
+                    .text(data[i].text)
+                    )
+                    .append($('<td>')
+                    .text(data[i].votes)
+                    )
+                );
+            }
+        });
     });
 </script>
 

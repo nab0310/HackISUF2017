@@ -1,13 +1,7 @@
-var mongoose = require('mongoose');
-var MongoClient = require('mongodb').MongoClient;
+var mongoist = require('mongoist');
 var url = 'mongodb://heroku_j8s76cm0:puh9lnhidinimuqbr7m6lm8umq@ds125565.mlab.com:25565/heroku_j8s76cm0';
 var myCollection;
-var db = MongoClient.connect(url, function(err, db) {
-    if(err)
-        throw err;
-    console.log("connected to the mongoDB !");
-    myCollection = db.collection('tweets');
-});
+var db = mongoist(url);
 
 const express = require('express')
 const app = express()
@@ -25,8 +19,9 @@ app.get('/index.html', function (req, res) {
 })
 
 app.get('/getTop', function (req, res) {
-  var commands = myCollection.find().limit(10).sort({ "votes": 1 });
-  res.send(commands);
+   db.tweets.findAsCursor().limit(10).sort({votes: -1 }).toArray().then((commands)=>{
+     res.json(commands);
+   });
 })
 
 app.get('/about.html', function (req, res) {
@@ -46,5 +41,5 @@ app.get('/contact.html', function (req, res) {
 })
 
 app.listen(port, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port '+port)
 })
